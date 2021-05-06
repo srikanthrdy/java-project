@@ -28,7 +28,6 @@ pipeline {
             steps {
 
                 script {
-                withMaven(jdk: 'JAVA_HOME', maven: 'Maven',mavenSettingsFilePath: '/home/srikanth/.m2/settings.xml') {
                 sh "mvn package -DskipTests=true"
                 }
                 }
