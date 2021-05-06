@@ -34,7 +34,6 @@ pipeline {
 
             }
 
-        }
         stage("Sonar-scan") {
             steps {
                 script {
