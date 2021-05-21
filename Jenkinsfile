@@ -1,25 +1,46 @@
 pipeline {
-    agent any
+	
+    agent { 
+	    docker 
+	    { 
+		    image 'maven:3.8-openjdk-11' 
+		    args '-v /root/.m2:/root/.m2'
+	    }
+    	  }
+	
     stages {
-        stage('Clean') {
-            steps {
-               sh "/usr/share/maven/bin/mvn clean"
-             }
-         }
         stage('Build') {
             steps {
-               sh "/usr/share/maven/bin/mvn compile"
-             } 
-         } 
-        stage('Test') {
-            steps {
-               sh "/usr/share/maven/bin/mvn test"
-             }
-         } 
-        stage('Verify') {
-            steps {
-               sh "/usr/share/maven/bin/mvn verify"
+                sh 'mvn -B -DskipTests clean package'
             }
-         }
-     }
+        }
+        stage('Test') { 
+            steps {
+                sh 'mvn test' 
+            }
+        }
+        stage("SonarQube Analysis") {
+            steps {
+                withSonarQubeEnv('sonar') {
+                sh 'mvn sonar:sonar'
+                  }
+             }
+           } 
+	
+	//stage("Trigger Nexus Job"){
+	  //  steps{
+		//build wait: true, job: '/Ice-Cream-Nexus'    	
+	    //}
+			
+//	 }  
+	    
+  	}
+	    
+//	post {
+  //        always {
+	//	  archiveArtifacts artifacts: 'target/My-Ice-Cream-Flavour!.war'
+      //       junit  'target/surefire-reports/*.xml'
+           //  }
+	//}
+     
 }
