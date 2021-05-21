@@ -8,31 +8,12 @@ pipeline {
         maven "maven"
     }
     stages {
-
-        stage("Git Clone") {
-
+    
+        stage('Build') {
             steps {
-
-                script {
-
-                    git 'https://github.com/srikanthrdy/jenkinsfile.git';
-
-                }
-
+                sh 'mvn -B -DskipTests clean package'
             }
-
         }
-
-        stage("Maven Build") {
-            
-            steps {
-
-                script {
-                sh "mvn package -DskipTests=true"
-                }
-                }
-
-            }
 
          stage("SonarQube Analysis") {
             steps {
