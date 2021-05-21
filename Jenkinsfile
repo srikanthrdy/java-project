@@ -1,41 +1,41 @@
 pipeline {
-	
-     agent {
+
+    agent {
         
         label "master"
     }
     tools{
-        maven "maven"
+        maven "Maven"
     }
-	
     stages {
-        stage('Build') {
+
+        stage("Maven Build") {
+            
             steps {
-                sh 'mvn -B -DskipTests clean package'
+
+                script {
+                sh "mvn package -DskipTests=true"
+                }
+                }
+
+            }
+        stage("Sonar-scan") {
+            steps {
+                script {
+                    
+                    sh "mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=Rajini@123"
+                }
+
+                }
+            }
+        
+        stage('Build Docker Image') {
+            steps {
+                
+                script {
+      sh "docker build -t hello-world-java:${BUILD_NUMBER} ."
+    
             }
         }
-        stage("SonarQube Analysis") {
-            steps {
-                withSonarQubeEnv('sonar') {
-                sh 'mvn sonar:sonar'
-                  }
-             }
-           } 
-	
-	//stage("Trigger Nexus Job"){
-	  //  steps{
-		//build wait: true, job: '/Ice-Cream-Nexus'    	
-	    //}
-			
-//	 }  
-	    
-  	}
-	    
-//	post {
-  //        always {
-	//	  archiveArtifacts artifacts: 'target/My-Ice-Cream-Flavour!.war'
-      //       junit  'target/surefire-reports/*.xml'
-           //  }
-	//}
-     
-}
+        }
+    }
